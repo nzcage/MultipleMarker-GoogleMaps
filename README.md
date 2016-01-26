@@ -1,2 +1,0 @@
-# wwwsitusnz
-Small Coding Notes
