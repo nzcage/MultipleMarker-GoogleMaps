@@ -23,8 +23,9 @@ $uQuery = pdo->prepare ($nsUser);
 $uQuery->execute(array(':q' => $q));
 while ($result = $uQuery->fetch(PDO::FETCH_ASSOC)) {
 	$id=$result['id'];
+	//this variabel ($googlemap) contains latt and long e.g. -33.8474, 151.2631
 	$googlemap=$result['googlemap'];
-	echo $googlemap;
+	print $googlemap;
 	}
 ?>
 
