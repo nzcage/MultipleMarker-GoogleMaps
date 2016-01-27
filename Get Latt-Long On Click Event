@@ -63,7 +63,7 @@ I. Inside tag <head></head>
     google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 
-Inside HTML
+II. Inside Body tag:
     a. Input Search:
     <input id="qfront" name="qfront" placeholder="type a location here ..." type="text"/>
     
