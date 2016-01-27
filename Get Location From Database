@@ -1,0 +1,100 @@
+This demonstrates how to get location in google maps. The data includes lattitude and longitude. It comes from Database.
+I use Simple Native Ajax and PDO for this sample.
+
+/* googleAPI link:
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+*/
+
+I. db_data.php File:
+
+<?php
+include('../database-path.php');
+error_reporting(E_ALL);
+?>
+<?php
+//get query from ajax
+if(isset($_GET['q'])) {
+    $q = $_GET['q'];
+	}
+// Detect what user attempts to find (a location inside inputbox):
+$q = isset($_GET['q']) ? $_GET['q'] : '';
+$nsUser="SELECT * FROM datamap WHERE school=:q";
+$uQuery = pdo->prepare ($nsUser);
+$uQuery->execute(array(':q' => $q));
+while ($result = $uQuery->fetch(PDO::FETCH_ASSOC)) {
+	$id=$result['id'];
+	$googlemap=$result['googlemap'];
+	echo $googlemap;
+	}
+?>
+
+II. Simple Ajax (Purpose: Call data from database after user type the location in searchbox and do onkeypress event (incl. the process of interpretation the latt and long grabbed from the database:
+
+			<script>
+				function getuserquery(str) {
+					var xmlhttp = new XMLHttpRequest();
+					xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						document.getElementById("getdata").value = xmlhttp.responseText;
+						process_me()
+						}
+					}
+					xmlhttp.open("POST", "db_data.php?q="+str, true);
+					xmlhttp.send(null);
+				}
+				//start: calling maps
+				var map;
+				function process_me() {
+				var datafrom = document.querySelector("#getdata").value;
+				//break data latt and long into array (latt and long)...
+				var datafrom = datafrom.split(',');
+				var x = datafrom[0];
+				var y = datafrom[1];
+				var mapCanvas = document.getElementById('map_canvas');
+				var mapOptions = {
+				  center:new google.maps.LatLng(x,y),
+				  zoom:18,
+				  mapTypeId:google.maps.MapTypeId.ROADMAP  //SATELLITE
+				}
+				var map = new google.maps.Map(mapCanvas, mapOptions)
+				addMarker(new google.maps.LatLng(x,y), map);
+				
+				function addMarker(latLng, map) {
+				var infoWindowContent = '<div class="info_content">' +
+											'<p>Welcome to our School</p>' +
+										'</div>';
+					var infoWindow = new google.maps.InfoWindow({
+						content: infoWindowContent
+					});
+					var marker = new google.maps.Marker({
+						position: latLng,
+						map: map,
+						draggable: true,
+						title: document.querySelector("#typeloc").value,
+						animation: google.maps.Animation.DROP
+					});
+					google.maps.event.addListener(marker, 'click', function() {
+						infoWindow.open(map, marker);
+					});
+					return marker;
+				}
+			}	
+			</script>
+    <script>
+      function initialize() {
+        var mapCanvas = document.getElementById('map_canvas'); var mapOptions = {
+          center:new google.maps.LatLng(-9.82634, 14.8980),
+          zoom:2,
+          mapTypeId:google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions)
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+	
+	
+III. inside Body:
+
+		<input id="typeloc" name="typeloc" value="" type="text"  onKeyPress="getuserquery(this.value)"/>
+		<input id="getdata" name="getdata" type="hidden" value=""/>
+    <div id="map_canvas" style="width:100%; height:280px; margin:0px; padding:0px;"></div>
