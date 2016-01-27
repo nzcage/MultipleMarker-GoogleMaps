@@ -1,7 +1,7 @@
 This demonstrates basic usage of map:
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
-    <script>
+<script>
       function initialize() {
         var mapCanvas = document.getElementById('map'); var mapOptions = {
           center:new google.maps.LatLng(-33.8474, 151.2631),
@@ -11,6 +11,6 @@ This demonstrates basic usage of map:
         var map = new google.maps.Map(mapCanvas, mapOptions)
       }
       google.maps.event.addDomListener(window, 'load', initialize);
-	</script>
+</script>
 	
-	Note: also available at http://www.wwwsitus.com
+Note: also available at http://www.wwwsitus.com
