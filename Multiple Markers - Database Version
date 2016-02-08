@@ -1,0 +1,228 @@
+Create 4 files:
+- 1st file: inc.php //grab the lattitude and longitude of a or some locations.
+- 2nd file: num_inc.php //detect number of values exist based on MySql query
+- 3rd file: index.php // call, process and show the map.
+
+INDEX.PHP
+
+gMap API inside tag <head></head>, as follow:
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+
+
+		<input id="qfront" name="qfront" placeholder="Ketik Nama Kampus ..." value="" type="text" onKeyPress="script_grabbed(this.value);"  /><button onClick="script_grabbed(this.value);" class="btnCari">Cari...</button>
+		<input id="valdata" name="valdata" type="hidden" value=""/>
+		<input id="numvalue" name="numvalue" type="hidden" value=""/>
+		<div id="map_canvas"></div>
+			<script>
+				//document.getElementById("qfront").addEventListener("keydown", CalmDown, false);
+				function script_grabbed(str) {
+				  var xmlhttp = new XMLHttpRequest();
+				  xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					  document.getElementById("numvalue").value = xmlhttp.responseText;
+					  var datafound = document.getElementById("numvalue").value;
+						var xmlhttp2 = new XMLHttpRequest();
+						xmlhttp2.onreadystatechange = function() {
+						  if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+							document.getElementById("valdata").value = xmlhttp2.responseText;
+							var wwwsitus = document.getElementById("valdata").value;
+							var n_result = wwwsitus.split(',');
+								if (datafound == 1) {
+									var x0 = n_result[0];
+									var y0 = n_result[1];
+									var wwwsitus = [
+										['<h4></h4>', x0,y0]
+										];
+									}
+								else if (datafound == 2) {
+									var x0 = n_result[0];
+									var y0 = n_result[1];
+									var x1 = n_result[2];
+									var y1 = n_result[3];
+									var wwwsitus = [
+										['<h4></h4>', x0,y0],
+										['<h4></h4>', x1,y1]
+										];
+									}	
+								else if (datafound == 3) {
+									var x0 = n_result[0];
+									var y0 = n_result[1];
+									var x1 = n_result[2];
+									var y1 = n_result[3];
+									var x2 = n_result[4];
+									var y2 = n_result[5];
+									var wwwsitus = [
+										['<h4></h4>', x0,y0],
+										['<h4></h4>', x1,y1],
+										['<h4></h4>', x2,y2]
+										];
+									}	
+								else if (datafound == 4) {
+									var x0 = n_result[0];
+									var y0 = n_result[1];
+									var x1 = n_result[2];
+									var y1 = n_result[3];
+									var x2 = n_result[4];
+									var y2 = n_result[5];
+									var x3 = n_result[6];
+									var y3 = n_result[7];
+									var wwwsitus = [
+										['<h4></h4>', x0,y0],
+										['<h4></h4>', x1,y1],
+										['<h4></h4>', x2,y2],
+										['<h4></h4>', x3,y3]
+										];
+									}	
+								else if (datafound == 5) {
+									var x0 = n_result[0];
+									var y0 = n_result[1];
+									var x1 = n_result[2];
+									var y1 = n_result[3];
+									var x2 = n_result[4];
+									var y2 = n_result[5];
+									var x3 = n_result[6];
+									var y3 = n_result[7];
+									var x4 = n_result[8];
+									var y4 = n_result[9];
+									var wwwsitus = [
+										['<h4></h4>', x0,y0],
+										['<h4></h4>', x1,y1],
+										['<h4></h4>', x2,y2],
+										['<h4></h4>', x3,y3],
+										['<h4></h4>', x4,y4]
+										];
+									}	
+								else{
+									var no_kampus = document.querySelector("#qfront").value;
+								    alert('Data Kost Sekitar Kampus ' + '"'+no_kampus+'"' + ' Belum Terdaftar!');
+									}		
+							// Setup the different icons and shadows
+							var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+							
+							var icons = [
+							  iconURLPrefix + 'red-dot.png',
+							  iconURLPrefix + 'green-dot.png',
+							  iconURLPrefix + 'blue-dot.png',
+							  iconURLPrefix + 'orange-dot.png',
+							  iconURLPrefix + 'purple-dot.png',
+							  iconURLPrefix + 'pink-dot.png',      
+							  iconURLPrefix + 'yellow-dot.png'
+							]
+							var iconsLength = icons.length;
+						
+							var map = new google.maps.Map(document.getElementById('map_canvas'), {
+							  zoom: 10,
+							  center: new google.maps.LatLng(-37.92, 151.25),
+							  mapTypeId: google.maps.MapTypeId.ROADMAP,
+							  mapTypeControl: true,
+							  streetViewControl: true,
+							  panControl: true,
+							  zoomControlOptions: {
+								 position: google.maps.ControlPosition.RIGHT_BOTTOM
+							  }
+							});
+						
+							var infowindow = new google.maps.InfoWindow({
+							  maxWidth: 160
+							});
+						
+							var markers = new Array();
+							
+							var iconCounter = 0;
+							
+							// Add the markers and infowindows to the map
+							for (var i = 0; i < wwwsitus.length; i++) {  
+							  var marker = new google.maps.Marker({
+								position: new google.maps.LatLng(wwwsitus[i][1], wwwsitus[i][2]),
+								map: map,
+								animation: google.maps.Animation.DROP,
+								icon: icons[iconCounter]
+							  });
+						
+							  markers.push(marker);
+						
+							  google.maps.event.addListener(marker, 'click', (function(marker, i) {
+								return function() {
+								  infowindow.setContent(wwwsitus[i][0]);
+								  infowindow.open(map, marker);
+								}
+							  })(marker, i));
+							  
+							  iconCounter++;
+							  // We only have a limited number of possible icon colors, so we may have to restart the counter
+							  if(iconCounter >= iconsLength) {
+								iconCounter = 0;
+							  }
+							}
+						
+							function autoCenter() {
+							  //  Create a new viewpoint bound
+							  var bounds = new google.maps.LatLngBounds();
+							  //  Go through each...
+							  for (var i = 0; i < markers.length; i++) {  
+										bounds.extend(markers[i].position);
+							  }
+							  //  Fit these bounds to the map
+							  map.fitBounds(bounds);
+							}
+							autoCenter();
+
+
+						  }
+						}
+						xmlhttp2.open("POST", "inc.php?q=" + str, true);
+						xmlhttp2.send(null);
+					}
+				  }
+				  xmlhttp.open("POST", "inc_num.php?q=" + str, true);
+				  xmlhttp.send(null);
+				}
+		</script>
+
+INC.PHP:
+
+<?php
+include('library/mydatabase.php');
+error_reporting(E_ALL);
+?>
+<?php
+if(isset($_GET['q'])) {
+    $q = $_GET['q'];
+	}
+$q = isset($_GET['q']) ? $_GET['q'] : '';
+$nsUser="SELECT * FROM data_map WHERE kampusterdekat=:q";
+$uQuery = $pdo->prepare ($nsUser);
+$uQuery->execute(array(':q' => $q));
+$map = array(); //DEFINE ARRAY
+while ($result = $uQuery->fetch(PDO::FETCH_ASSOC)) {
+	$id=$result['id'];
+	$googlemap=$result['googlemap']; //DO NOT USE THIS TO CREATE ARRAY
+	$map[] = $googlemap;
+	} 
+echo implode(', ' , $map); // WITHOUT DOUBLE QUOTES AT EACH VALUE
+?>
+
+NUM_INC.PHP:
+
+<?php
+include('library/mydatabase.php');
+error_reporting(E_ALL);
+?>
+<?php
+if(isset($_GET['q'])) {
+    $q = $_GET['q'];
+	}
+$q = isset($_GET['q']) ? $_GET['q'] : '';
+$sql = "SELECT count(*) FROM data_map  WHERE kampusterdekat=:q"; 
+$uQuery = $pdo->prepare($sql); 
+$uQuery->execute(array(':q' => $q));
+$result = $uQuery->fetchColumn(); 
+if($result> 0) {
+	echo $result;
+	}
+?>
+
+NOTE:
+Also discussed in stackoverflow:
+http://stackoverflow.com/questions/35176207/js-array-detect-number-of-values-from-php-array-found-grabbed-from-database
+and Available in www.wwwsitus.com
